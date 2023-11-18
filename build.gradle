@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+}
+
+group = 'net.biomodels.jummp'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = "1.8"
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact("build/libs/biomodels-utilities-$version" + ".jar") {
+                extension 'jar'
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name 'nexus'
+            def releaseUrl = 'https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release'
+            def snapshotUrl = 'https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots'
+            def releasesRepoUrl = layout.buildDirectory.dir(releaseUrl)
+            def snapshotsRepoUrl = layout.buildDirectory.dir(snapshotUrl)
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username project.repoUser
+                password project.repoPassword
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
