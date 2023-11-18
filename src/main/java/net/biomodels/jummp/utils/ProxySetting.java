@@ -2,10 +2,11 @@ package net.biomodels.jummp.utils;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProxySetting {
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(ProxySetting.class));
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProxySetting.class);
     public static Proxy detect() {
         LOGGER.info("Detecting Proxy...");
         String host = System.getenv().getOrDefault("https.proxyHost", "localhost");

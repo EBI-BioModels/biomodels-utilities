@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,24 +18,26 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestMimeTypeChecker {
-    private static File init(final String resourceName) {
+    private final Logger LOGGER = LoggerFactory.getLogger(TestMimeTypeChecker.class);
+
+    private File init(final String resourceName) {
         ClassLoader classLoader = TestMimeTypeChecker.class.getClassLoader();
         File file = new File(classLoader.getResource(resourceName).getFile());
         String absolutePath = file.getAbsolutePath();
-        System.out.println(absolutePath);
+        LOGGER.info("Absolute path: {}", absolutePath);
         return file;
     }
 
     @BeforeEach
     void setUp() {
-        System.out.println("Thinking somethings put here");
+        LOGGER.info("Thinking somethings put here");
     }
     @Test
     @DisplayName("Check the mimetype of a given file")
     public void testCheckMimeType() {
         File file = this.init("files/BIOMD0000001066.omex");
         String mime = MimeTypeChecker.check(file);
-        System.out.println(mime);
+        LOGGER.info("The detected mime type {}", mime);
         // As of writing this test, OMEX files haven't been  recognised as the common file type
         assertTrue("content/unknown" == mime);
     }

@@ -1,7 +1,7 @@
 package net.biomodels.jummp.utils;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.net.Proxy;
 import java.net.URLConnection;
 
 public class MimeTypeChecker {
-    //private static final Logger LOGGER = LoggerFactory.getLogger(MimeTypeChecker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MimeTypeChecker.class);
     public static String check(final File file) {
         String mime;
         try {
@@ -22,8 +22,7 @@ public class MimeTypeChecker {
             }
             mime = connection.getContentType();
         } catch (IOException e) {
-//            LOGGER.debug(String.valueOf(e), "could not get mime from file " + file);
-            System.out.println("could not get mime from file " + file.getAbsolutePath());
+            LOGGER.info("Could not get mime from file {}", file.getAbsolutePath());
             return null;
         }
         return mime;
