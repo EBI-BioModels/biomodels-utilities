@@ -1,6 +1,5 @@
 package net.biomodels.jummp.utils;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,15 +13,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestMimeTypeChecker {
     private final Logger LOGGER = LoggerFactory.getLogger(TestMimeTypeChecker.class);
 
-    private File init(final String resourceName) {
+    private File init() {
         ClassLoader classLoader = TestMimeTypeChecker.class.getClassLoader();
-        File file = new File(classLoader.getResource(resourceName).getFile());
+        File file = new File(Objects.requireNonNull(classLoader.getResource("files/BIOMD0000001066.omex")).getFile());
         String absolutePath = file.getAbsolutePath();
         LOGGER.info("Absolute path: {}", absolutePath);
         return file;
@@ -35,11 +36,12 @@ public class TestMimeTypeChecker {
     @Test
     @DisplayName("Check the mimetype of a given file")
     public void testCheckMimeType() {
-        File file = this.init("files/BIOMD0000001066.omex");
+        File file = this.init();
+        assertTrue(file.length() > 0);
         String mime = MimeTypeChecker.check(file);
         LOGGER.info("The detected mime type {}", mime);
         // As of writing this test, OMEX files haven't been  recognised as the common file type
-        assertTrue("content/unknown" == mime);
+        assertSame("content/unknown", mime);
     }
 
         @Test
