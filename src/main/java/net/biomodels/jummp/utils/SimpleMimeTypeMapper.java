@@ -1,30 +1,29 @@
 package net.biomodels.jummp.utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * A simple Java program to fetch MIME types from a GitHub Gist
  * and build bidirectional maps:
  * - MIME type to extension(s) mapping (primary map from JSON)
  * - Extension to MIME type mapping (reverse map)
- *
+ * <p>
  * JSON format: {"mime/type": [".ext1", ".ext2", ".ext3"], ...}
  * Example: {"image/jpeg": [".jpg", ".jpeg", ".jpe"], "application/pdf": [".pdf"]}
- *
+ * <p>
  * This version uses only standard Java libraries (no external dependencies).
  */
 public class SimpleMimeTypeMapper {
 
     private static final String GIST_ROOT = "https://gist.githubusercontent.com/ntung/";
     private static final String GIST_ID = "7a64db7885e166eb84383f83b8e6aeb2";
-    private static final String GIST_URL = GIST_ROOT + GIST_ID +  "/raw/mime-types-to-file-extension.json";
+    private static final String GIST_URL = GIST_ROOT + GIST_ID + "/raw/mime-types-to-file-extension.json";
+    private static final String CACHE_FILE = ".biomodels/utilities/mime-types-to-file-extension.json";
 
     // MIME type to extension(s) mapping (e.g., "image/jpeg" -> [".jpg", ".jpeg", ".jpe"])
     private final Map<String, List<String>> mimeToExtensionsMap;
@@ -35,34 +34,6 @@ public class SimpleMimeTypeMapper {
     public SimpleMimeTypeMapper() {
         this.mimeToExtensionsMap = new HashMap<>();
         this.extensionToMimeMap = new HashMap<>();
-    }
-
-    /**
-     * Fetches the JSON content from the given URL
-     */
-    private String fetchJsonFromUrl(String urlString) throws Exception {
-        URL url = new URL(urlString);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-
-        int responseCode = connection.getResponseCode();
-        if (responseCode != 200) {
-            throw new RuntimeException("Failed to fetch data. HTTP response code: " + responseCode);
-        }
-
-        StringBuilder response = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-        }
-
-        connection.disconnect();
-        return response.toString();
     }
 
     /**
@@ -196,7 +167,7 @@ public class SimpleMimeTypeMapper {
      */
     public void buildMap() throws Exception {
         System.out.println("Fetching MIME types from GitHub Gist...");
-        String jsonData = fetchJsonFromUrl(GIST_URL);
+        String jsonData = JsonCacheUtil.getOrFetchJson(GIST_URL, CACHE_FILE, 30);
 
         System.out.println("Parsing JSON data...");
         parseJson(jsonData);
